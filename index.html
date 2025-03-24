@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Invoice Images</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f9f9f9; }
+    h2 { color: #333; }
+    form { background: #fff; padding: 2rem; border-radius: 8px; max-width: 500px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input[type="file"] { margin: 1rem 0; }
+    button { background: #4CAF50; color: white; border: none; padding: 0.8rem 1.2rem; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #45a049; }
+    #response { margin-top: 1rem; color: green; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Upload Invoice Images (.jpg)</h2>
+  <form id="uploadForm">
+    <input type="file" id="images" name="images" accept="image/jpeg" multiple required />
+    <br />
+    <button type="submit">Upload</button>
+    <div id="response"></div>
+  </form>
+
+  <script>
+    const webhookUrl = "https://gauranshv.app.n8n.cloud/webhook-test/upload-images";
+
+    document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const files = document.getElementById("images").files;
+      const formData = new FormData();
+
+      for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+      }
+
+      try {
+        const response = await fetch(webhookUrl, {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById("response").innerText = JSON.stringify(result);
+      } catch (error) {
+        document.getElementById("response").innerText = "Upload failed. Check console.";
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
